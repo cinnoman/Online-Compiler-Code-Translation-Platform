@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C to Assembly Compiler</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #F2EFE7;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    h1, h2, p, label, textarea, pre, button, a {
+      font-family: 'Poppins', sans-serif; /* Ensure all text elements use Poppins */
+    }
+
+    .navbar {
+      background-color: #18230F;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .navbar a {
+      font-family: 'Poppins', sans-serif;
+      color: white;
+      text-align: center;
+      padding: 14px 20px;
+      text-decoration: none;
+      font-size: 17px;
+      transition: background-color 0.3s;
+    }
+
+    .navbar a:hover, .navbar a.active {
+      background-color: #27391C;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 80%;
+      max-width: 800px;
+      background: #255F38;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #F2EFE7;
+    }
+
+    textarea {
+      width: 100%;
+      height: 200px;
+      padding: 10px;
+      border: 1px solid #18230F;
+      border-radius: 5px;
+      font-size: 14px;
+      resize: vertical;
+      background: #F2EFE7;
+      color: #333;
+      font-family: 'Poppins', monospace; /* Use Poppins for text areas and preformatted text */
+    }
+
+    /* Removed global full-width button rule to allow local control */
+
+    button {
+      font-family: 'Poppins', sans-serif; /* Ensure buttons use Poppins */
+    }
+
+    button:hover {
+      background: #27391C;
+    }
+
+    #output {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #18230F;
+      border-radius: 5px;
+      background: #F2EFE7;
+      font-family: 'Poppins', monospace; /* Use Poppins for text areas and preformatted text */
+      white-space: pre-wrap;
+      height: 250px;
+      overflow-y: auto;
+      color: #333;
+    }
+
+    footer {
+      background-color: #18230F;
+      color: #F2EFE7;
+      text-align: center;
+      padding: 15px;
+      margin-top: auto;
+    }
+
+    footer p, footer a {
+      font-family: 'Poppins', sans-serif; /* Ensure footer text uses Poppins */
+    }
+
+    footer p {
+      margin: 5px 0;
+    }
+
+    footer a {
+      color: #1F7D53;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    .textarea-container {
+      position: relative;
+    }
+
+    .textarea-container button {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      padding: 3px 8px;
+      font-size: 12px;
+      border: none;
+      border-radius: 3px;
+      background: #18230F;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .textarea-container button:hover {
+      background: #27391C;
+    }
+
+    #output-container {
+      position: relative;
+    }
+
+    #output-container button {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      padding: 3px 8px;
+      font-size: 12px;
+      border: none;
+      border-radius: 3px;
+      background: #18230F;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    #output-container button:hover {
+      background: #27391C;
+    }
+
+    .convert-btn {
+      width: 100%;
+      padding: 10px;
+      background: #18230F;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+
+    .convert-btn:hover {
+      background: #27391C;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .small-btn {
+      flex: 1;
+      padding: 8px;
+      font-size: 14px;
+      background-color: #1F7D53;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .small-btn:hover {
+      background-color: #166642;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <a href="/">Home</a>
+    <a href="/c-to-assembly" class="active">C to Assembly</a>
+    <a href="/c-compiler">C Compiler</a>
+    <a href="/assembly-compiler">Assembly Compiler</a>
+  </div>
+
+  <div class="main-content">
+    <div class="container">
+      <h1>C to Assembly Compiler</h1>
+      <div class="textarea-container">
+        <textarea id="inputCode" placeholder="Enter C code here..."></textarea>
+      </div>
+      <div class="button-row">
+        <button class="small-btn" onclick="copyCode('inputCode')">Copy Code</button>
+        <button class="small-btn" onclick="pasteCode('inputCode')">Paste Code</button>
+      </div>
+
+      <button class="convert-btn" onclick="compileCode()">Convert to Assembly</button>
+
+      <h2>Assembly Code Output</h2>
+      <div class="textarea-container">
+        <pre id="output">Waiting for compilation...</pre>
+      </div>
+      <div class="button-row">
+        <button class="small-btn" onclick="copyCode('output')">Copy Output</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Compiler Platform - Educational Tool</p>
+    <p>Designed and developed by Abdullah Al Noman</p>
+    <p>This platform supports standard C code compilation and execution along with Assembly language integration</p>
+    <p>For more information or feedback, contact <a href="mailto:example@email.com">example@email.com</a></p>
+  </footer>
+
+  <script>
+    function compileCode() {
+      let cCode = document.getElementById('inputCode').value;
+      document.getElementById('output').textContent = "Compiling...";
+      
+      fetch('/compile-to-assembly', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: cCode })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        document.getElementById('output').textContent = data.assemblyCode || "Compilation failed.";
+      })
+      .catch(error => {
+        document.getElementById('output').textContent = "Error: " + error.message;
+        console.error('Error:', error);
+      });
+    }
+
+    function copyCode(elementId) {
+      const element = document.getElementById(elementId);
+      const text = element.tagName === 'TEXTAREA' ? element.value : element.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+    }
+
+    function pasteCode(elementId) {
+      const element = document.getElementById(elementId);
+      navigator.clipboard.readText().then(text => {
+        element.value = text;
+      }).catch(err => {
+        console.error('Failed to paste: ', err);
+      });
+    }
+  </script>
+</body>
+</html>
+
