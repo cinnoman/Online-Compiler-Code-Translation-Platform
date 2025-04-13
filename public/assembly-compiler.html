@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Assembly Compiler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #F2EFE7;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background-color: #18230F;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .navbar a {
+      color: white;
+      text-align: center;
+      padding: 14px 20px;
+      text-decoration: none;
+      font-size: 17px;
+      transition: background-color 0.3s;
+    }
+
+    .navbar a:hover, .navbar a.active {
+      background-color: #27391C;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 800px;
+      background: #255F38;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #F2EFE7;
+    }
+
+    .textarea-container {
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .textarea-container button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 3px 8px;
+      font-size: 12px;
+      border: none;
+      border-radius: 3px;
+      background: #18230F;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      z-index: 1;
+    }
+
+    .textarea-container button:hover {
+      background: #27391C;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      padding: 10px;
+      padding-right: 60px;
+      border: 1px solid #18230F;
+      border-radius: 5px;
+      font-size: 14px;
+      resize: vertical;
+      background: #F2EFE7;
+      color: #333;
+      font-family: 'Poppins', monospace;
+      box-sizing: border-box;
+    }
+
+    .input-panel {
+      margin-top: 20px;
+      color: #fff;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #18230F;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    button:hover {
+      background: #27391C;
+    }
+
+    #output {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #18230F;
+      border-radius: 5px;
+      background: #F2EFE7;
+      font-family: 'Poppins', monospace;
+      white-space: pre-wrap;
+      height: 250px;
+      overflow-y: auto;
+      color: #333;
+      padding-right: 60px;
+    }
+
+    .footer {
+      background-color: #18230F;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: auto;
+    }
+
+    .footer p {
+      margin: 5px 0;
+    }
+
+    .footer a {
+      color: #8fd9a8;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .status {
+      text-align: center;
+      margin: 10px 0;
+      color: #18230F;
+      font-weight: 500;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .small-btn {
+      flex: 1;
+      padding: 8px;
+      font-size: 14px;
+      background-color: #1F7D53;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .small-btn:hover {
+      background-color: #166642;
+    }
+
+    @media (max-width: 600px) {
+      .small-btn {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <a href="/">Home</a>
+    <a href="/c-to-assembly">C to Assembly</a>
+    <a href="/c-compiler">C Compiler</a>
+    <a href="/assembly-compiler" class="active">Assembly Compiler</a>
+  </div>
+
+  <div class="main-content">
+    <div class="container">
+      <h1>Assembly Compiler and Runner</h1>
+      <div class="textarea-container">
+        <textarea id="inputCode" placeholder="Enter Assembly code here..."></textarea>
+      </div>
+      <div class="button-row">
+        <button class="small-btn" onclick="copyCode('inputCode')">Copy Code</button>
+        <button class="small-btn" onclick="pasteCode('inputCode')">Paste Code</button>
+      </div>
+
+      <div class="input-panel">
+        <label for="programInput">Program Input (if needed):</label>
+        <div class="textarea-container">
+          <textarea id="programInput" placeholder="Enter input for your program here..."></textarea>
+        </div>
+        <div class="button-row">
+          <button class="small-btn" onclick="copyCode('programInput')">Copy Input</button>
+          <button class="small-btn" onclick="pasteCode('programInput')">Paste Input</button>
+        </div>
+      </div>
+
+      <button onclick="runAssemblyCode()">Compile and Run</button>
+      <div id="status" class="status">Ready</div>
+
+      <h2>Program Output</h2>
+      <div class="textarea-container">
+        <pre id="output">Output will appear here...</pre>
+      </div>
+      <div class="button-row">
+        <button class="small-btn" onclick="copyCode('output')">Copy Output</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>© 2025 Compiler Platform - Created by Abdullah Al Noman</p>
+    <p>A web-based tool for compiling and executing C and Assembly code</p>
+    <p>Built with <a href="https://flask.palletsprojects.com/">Flask</a> and modern web technologies</p>
+  </div>
+
+  <script>
+    function runAssemblyCode() {
+      const asmCode = document.getElementById('inputCode').value;
+      const userInput = document.getElementById('programInput').value;
+      const outputElement = document.getElementById('output');
+      const statusElement = document.getElementById('status');
+
+      if (!asmCode.trim()) {
+        outputElement.textContent = "Error: Please enter some Assembly code to compile.";
+        return;
+      }
+
+      outputElement.textContent = "Compiling...";
+      statusElement.textContent = "Compiling your code...";
+
+      fetch('/compile-and-run-assembly', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: asmCode,
+          input: userInput
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        outputElement.textContent = data.output || "No output generated.";
+        statusElement.textContent = "Execution completed";
+      })
+      .catch(error => {
+        outputElement.textContent = "Error: " + error.message;
+        statusElement.textContent = "Error occurred";
+        console.error('Error:', error);
+      });
+    }
+
+    function copyCode(elementId) {
+      const element = document.getElementById(elementId);
+      const text = element.tagName === 'TEXTAREA' ? element.value : element.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+    }
+
+    function pasteCode(elementId) {
+      const element = document.getElementById(elementId);
+      navigator.clipboard.readText().then(text => {
+        element.value = text;
+      }).catch(err => {
+        console.error('Failed to paste: ', err);
+      });
+    }
+  </script>
+</body>
+</html>
+``` 
