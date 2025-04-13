@@ -149,7 +149,8 @@ def compile_and_run_assembly():
 
         temp_id = uuid.uuid4().hex
         asm_file = f"temp_{temp_id}.s"
-        exec_file = f"temp_{temp_id}.exe"
+        # Use a more complete path for the executable
+        exec_file = os.path.join(os.getcwd(), f"temp_{temp_id}")
 
         # Write Assembly code to a temporary file
         with open(asm_file, "w") as file:
@@ -157,31 +158,35 @@ def compile_and_run_assembly():
 
         output = ""
         try:
-            # Compile and link the assembly file - CHANGED FROM -m32 to support 64-bit
+            # Compile and link the assembly file
             compile_process = subprocess.run(
                 ["gcc", asm_file, "-o", exec_file],
                 capture_output=True, text=True, timeout=10
             )
             
             if compile_process.returncode == 0:
-                # Run the compiled program
-                run_cmd = [exec_file]
-                
-                try:
-                    run_process = subprocess.run(
-                        run_cmd,
-                        input=user_input,
-                        capture_output=True, text=True, timeout=5
-                    )
-                    output = run_process.stdout
-                    if run_process.returncode != 0:
-                        output += f"\nProgram exited with status: {run_process.returncode}"
-                    if run_process.stderr:
-                        output += f"\nStderr:\n{run_process.stderr}"
-                except subprocess.TimeoutExpired:
-                    output = "Execution timed out (limit: 5 seconds)"
-                except Exception as e:
-                    output = f"Runtime Error: {str(e)}"
+                # Check if the executable was actually created
+                if os.path.exists(exec_file):
+                    # Run the compiled program
+                    run_cmd = [exec_file]
+                    
+                    try:
+                        run_process = subprocess.run(
+                            run_cmd,
+                            input=user_input,
+                            capture_output=True, text=True, timeout=5
+                        )
+                        output = run_process.stdout
+                        if run_process.returncode != 0:
+                            output += f"\nProgram exited with status: {run_process.returncode}"
+                        if run_process.stderr:
+                            output += f"\nStderr:\n{run_process.stderr}"
+                    except subprocess.TimeoutExpired:
+                        output = "Execution timed out (limit: 5 seconds)"
+                    except Exception as e:
+                        output = f"Runtime Error: {str(e)}"
+                else:
+                    output = f"Error: Executable file was not created after successful compilation."
             else:
                 output = f"Assembly/Linking Error:\n{compile_process.stderr}"
                 
@@ -195,8 +200,8 @@ def compile_and_run_assembly():
             try:
                 if os.path.exists(f):
                     os.remove(f)
-            except:
-                pass
+            except Exception as e:
+                app.logger.error(f"Error removing temp file {f}: {str(e)}")
 
         return jsonify({'output': output})
     
