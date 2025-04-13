@@ -157,9 +157,9 @@ def compile_and_run_assembly():
 
         output = ""
         try:
-            # Compile and link the assembly file
+            # Compile and link the assembly file - CHANGED FROM -m32 to support 64-bit
             compile_process = subprocess.run(
-                ["gcc", asm_file, "-o", exec_file, "-m32"],
+                ["gcc", asm_file, "-o", exec_file],
                 capture_output=True, text=True, timeout=10
             )
             
